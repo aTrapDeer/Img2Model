@@ -30,6 +30,8 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { createMeshyTask, checkMeshyTaskStatus, MeshyTaskResponse } from "@/lib/meshy-api"
 import { useToast } from "@/components/ui/use-toast"
 import Link from "next/link"
+import { AppTour } from "@/components/app-tour"
+import { HelpButton } from "@/components/help-button"
 
 export default function Home() {
   const [brushSize, setBrushSize] = useState(5)
@@ -311,266 +313,269 @@ export default function Home() {
   }, [taskId, isGenerating3D, toast]);
 
   return (
-    <main className="flex flex-col h-screen bg-background">
-      <header className="flex items-center justify-between p-4 border-b">
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-          DesignVision 3D
-        </h1>
-        <div className="flex items-center gap-4">
-          <ThemeToggle />
-          <Button variant="outline" size="sm" asChild>
-            <Link href="/test-models">Show Tests</Link>
-          </Button>
-        </div>
-      </header>
-
-      <div className="flex flex-1 overflow-hidden">
-        {/* Drawing Panel */}
-        <div
-          className={`flex flex-col border-r ${
-            fullscreenPanel === "3d" ? "hidden" : fullscreenPanel === "drawing" ? "flex-1" : "w-1/2"
-          }`}
-        >
-          <div className="flex items-center justify-between p-2 border-b bg-muted/30">
-            <h2 className="text-lg font-medium">Drawing Canvas</h2>
-            <Button variant="ghost" size="icon" onClick={() => toggleFullscreen("drawing")}>
-              {fullscreenPanel === "drawing" ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+    <AppTour>
+      <main className="flex flex-col h-screen bg-background">
+        <header className="flex items-center justify-between p-4 border-b">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            DesignVision 3D
+          </h1>
+          <div className="flex items-center gap-4">
+            <HelpButton />
+            <ThemeToggle />
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/test-models">Show Tests</Link>
             </Button>
           </div>
+        </header>
 
-          <div className="flex-1 overflow-hidden">
-            <DrawingCanvas
-              brushSize={brushSize}
-              brushColor={brushColor}
-              activeTool={activeTool}
-              canvasHistory={canvasHistory}
-              historyIndex={historyIndex}
-              setCanvasHistory={setCanvasHistory}
-              setHistoryIndex={setHistoryIndex}
-              onImageSelected={handleImageSelected}
-            />
-          </div>
+        <div className="flex flex-1 overflow-hidden">
+          {/* Drawing Panel */}
+          <div
+            className={`flex flex-col border-r drawing-panel ${
+              fullscreenPanel === "3d" ? "hidden" : fullscreenPanel === "drawing" ? "flex-1" : "w-1/2"
+            }`}
+          >
+            <div className="flex items-center justify-between p-2 border-b bg-muted/30">
+              <h2 className="text-lg font-medium">Drawing Canvas</h2>
+              <Button variant="ghost" size="icon" onClick={() => toggleFullscreen("drawing")}>
+                {fullscreenPanel === "drawing" ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+              </Button>
+            </div>
 
-          <div className="p-2 border-t bg-muted/30">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-1">
-                <Button
-                  variant={activeTool === "pencil" ? "default" : "ghost"}
-                  size="icon"
-                  onClick={() => setActiveTool("pencil")}
-                  title="Pencil"
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant={activeTool === "eraser" ? "default" : "ghost"}
-                  size="icon"
-                  onClick={() => setActiveTool("eraser")}
-                  title="Eraser"
-                >
-                  <Eraser className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant={activeTool === "square" ? "default" : "ghost"}
-                  size="icon"
-                  onClick={() => setActiveTool("square")}
-                  title="Square"
-                >
-                  <Square className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant={activeTool === "circle" ? "default" : "ghost"}
-                  size="icon"
-                  onClick={() => setActiveTool("circle")}
-                  title="Circle"
-                >
-                  <Circle className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant={activeTool === "bucket" ? "default" : "ghost"}
-                  size="icon"
-                  onClick={() => {
-                    console.log("Paint bucket button clicked, changing active tool to bucket");
-                    setActiveTool("bucket");
-                    console.log("Active tool is now:", "bucket");
-                  }}
-                  title="Paint Bucket"
-                >
-                  <Droplet className="h-4 w-4" />
-                </Button>
-                <div className="relative">
-                  <Button variant="ghost" size="icon" className="overflow-hidden" title="Color Picker">
-                    <Palette className="h-4 w-4" />
-                    <input
-                      type="color"
-                      value={brushColor}
-                      onChange={(e) => setBrushColor(e.target.value)}
-                      className="absolute inset-0 opacity-0 cursor-pointer"
-                    />
+            <div className="flex-1 overflow-hidden">
+              <DrawingCanvas
+                brushSize={brushSize}
+                brushColor={brushColor}
+                activeTool={activeTool}
+                canvasHistory={canvasHistory}
+                historyIndex={historyIndex}
+                setCanvasHistory={setCanvasHistory}
+                setHistoryIndex={setHistoryIndex}
+                onImageSelected={handleImageSelected}
+              />
+            </div>
+
+            <div className="p-2 border-t bg-muted/30">
+              <div className="flex items-center justify-between mb-2 drawing-tools">
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant={activeTool === "pencil" ? "default" : "ghost"}
+                    size="icon"
+                    onClick={() => setActiveTool("pencil")}
+                    title="Pencil"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={activeTool === "eraser" ? "default" : "ghost"}
+                    size="icon"
+                    onClick={() => setActiveTool("eraser")}
+                    title="Eraser"
+                  >
+                    <Eraser className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={activeTool === "square" ? "default" : "ghost"}
+                    size="icon"
+                    onClick={() => setActiveTool("square")}
+                    title="Square"
+                  >
+                    <Square className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={activeTool === "circle" ? "default" : "ghost"}
+                    size="icon"
+                    onClick={() => setActiveTool("circle")}
+                    title="Circle"
+                  >
+                    <Circle className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={activeTool === "bucket" ? "default" : "ghost"}
+                    size="icon"
+                    onClick={() => {
+                      console.log("Paint bucket button clicked, changing active tool to bucket");
+                      setActiveTool("bucket");
+                      console.log("Active tool is now:", "bucket");
+                    }}
+                    title="Paint Bucket"
+                  >
+                    <Droplet className="h-4 w-4" />
+                  </Button>
+                  <div className="relative">
+                    <Button variant="ghost" size="icon" className="overflow-hidden" title="Color Picker">
+                      <Palette className="h-4 w-4" />
+                      <input
+                        type="color"
+                        value={brushColor}
+                        onChange={(e) => setBrushColor(e.target.value)}
+                        className="absolute inset-0 opacity-0 cursor-pointer"
+                      />
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1">
+                  <Button variant="ghost" size="icon" onClick={handleUndo} disabled={historyIndex <= 0} title="Undo">
+                    <Undo2 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleRedo}
+                    disabled={historyIndex >= canvasHistory.length - 1}
+                    title="Redo"
+                  >
+                    <Redo2 className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={handleClear} title="Clear Canvas">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" title="Save Drawing">
+                    <Save className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
 
-              <div className="flex items-center gap-1">
-                <Button variant="ghost" size="icon" onClick={handleUndo} disabled={historyIndex <= 0} title="Undo">
-                  <Undo2 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleRedo}
-                  disabled={historyIndex >= canvasHistory.length - 1}
-                  title="Redo"
-                >
-                  <Redo2 className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="icon" onClick={handleClear} title="Clear Canvas">
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="icon" title="Save Drawing">
-                  <Save className="h-4 w-4" />
-                </Button>
+              <div className="flex items-center gap-2">
+                <span className="text-xs">Size:</span>
+                <Slider
+                  value={[brushSize]}
+                  min={1}
+                  max={50}
+                  step={1}
+                  onValueChange={(value) => setBrushSize(value[0])}
+                  className="w-32"
+                />
+                <span className="text-xs w-6">{brushSize}px</span>
               </div>
             </div>
-
-            <div className="flex items-center gap-2">
-              <span className="text-xs">Size:</span>
-              <Slider
-                value={[brushSize]}
-                min={1}
-                max={50}
-                step={1}
-                onValueChange={(value) => setBrushSize(value[0])}
-                className="w-32"
-              />
-              <span className="text-xs w-6">{brushSize}px</span>
-            </div>
-          </div>
-        </div>
-
-        {/* 3D Model Panel */}
-        <div
-          className={`flex flex-col ${
-            fullscreenPanel === "drawing" ? "hidden" : fullscreenPanel === "3d" ? "flex-1" : "w-1/2"
-          }`}
-        >
-          <div className="flex items-center justify-between p-2 border-b bg-muted/30">
-            <h2 className="text-lg font-medium">3D Model Viewer</h2>
-            <div className="flex items-center gap-2">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={handleDownloadModel}
-                disabled={!modelUrl}
-                title="Download 3D Model"
-              >
-                <Download className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="icon" onClick={() => toggleFullscreen("3d")}>
-                {fullscreenPanel === "3d" ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-              </Button>
-            </div>
           </div>
 
-          <div className="flex-1 overflow-hidden">
-            <Tabs defaultValue="model" className="h-full flex flex-col">
-              <div className="px-4 pt-2 flex justify-between items-center">
-                <TabsList>
-                  <TabsTrigger value="model">Model</TabsTrigger>
-                  <TabsTrigger value="settings">Settings</TabsTrigger>
-                </TabsList>
-                
+          {/* 3D Model Panel */}
+          <div
+            className={`flex flex-col model-panel ${
+              fullscreenPanel === "drawing" ? "hidden" : fullscreenPanel === "3d" ? "flex-1" : "w-1/2"
+            }`}
+          >
+            <div className="flex items-center justify-between p-2 border-b bg-muted/30">
+              <h2 className="text-lg font-medium">3D Model Viewer</h2>
+              <div className="flex items-center gap-2">
                 <Button 
-                  className="gap-2" 
-                  disabled={isGenerating3D || !currentImageData}
-                  onClick={handleGenerateModel}
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={handleDownloadModel}
+                  disabled={!modelUrl}
+                  title="Download 3D Model"
                 >
-                  {isGenerating3D ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Box className="h-4 w-4" />
-                  )}
-                  Generate Model Now
+                  <Download className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={() => toggleFullscreen("3d")}>
+                  {fullscreenPanel === "3d" ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
                 </Button>
               </div>
+            </div>
 
-              <TabsContent value="model" className="flex-1 mt-0">
-                <div className="h-full w-full bg-black/5 dark:bg-white/5 rounded-md overflow-hidden relative">
-                  {isGenerating3D && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 backdrop-blur-sm z-10">
-                      {uploadStatus ? (
-                        <>
-                          <UploadCloud className="h-10 w-10 mb-4 text-primary animate-bounce" />
-                          <div className="text-lg font-medium">{uploadStatus}</div>
-                        </>
-                      ) : (
-                        <>
-                          <Loader2 className="h-10 w-10 animate-spin mb-4 text-primary" />
-                          <div className="text-lg font-medium">Generating 3D Model...</div>
-                          <div className="w-64 h-2 bg-muted mt-4 rounded-full overflow-hidden">
-                            <div 
-                              className="h-full bg-primary" 
-                              style={{ width: `${generationProgress}%` }}
-                            />
-                          </div>
-                          <div className="text-sm mt-2">{generationProgress}% complete</div>
-                        </>
-                      )}
-                    </div>
-                  )}
+            <div className="flex-1 overflow-hidden">
+              <Tabs defaultValue="model" className="h-full flex flex-col">
+                <div className="px-4 pt-2 flex justify-between items-center">
+                  <TabsList>
+                    <TabsTrigger value="model">Model</TabsTrigger>
+                    <TabsTrigger value="settings">Settings</TabsTrigger>
+                  </TabsList>
                   
-                  {!modelUrl && !isGenerating3D && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/10 backdrop-blur-sm z-5">
-                      <Box className="h-16 w-16 mb-4 text-muted-foreground opacity-40" />
-                      <div className="text-lg font-medium text-muted-foreground">No 3D Model Generated Yet</div>
-                      <div className="text-sm mt-2 text-muted-foreground max-w-md text-center">
-                        Draw or import an image, then click the "Generate Model Now" button above to create a 3D model.
+                  <Button 
+                    className="gap-2 generate-button" 
+                    disabled={isGenerating3D || !currentImageData}
+                    onClick={handleGenerateModel}
+                  >
+                    {isGenerating3D ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Box className="h-4 w-4" />
+                    )}
+                    Generate Model Now
+                  </Button>
+                </div>
+
+                <TabsContent value="model" className="flex-1 mt-0">
+                  <div className="h-full w-full bg-black/5 dark:bg-white/5 rounded-md overflow-hidden relative">
+                    {isGenerating3D && (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 backdrop-blur-sm z-10">
+                        {uploadStatus ? (
+                          <>
+                            <UploadCloud className="h-10 w-10 mb-4 text-primary animate-bounce" />
+                            <div className="text-lg font-medium">{uploadStatus}</div>
+                          </>
+                        ) : (
+                          <>
+                            <Loader2 className="h-10 w-10 animate-spin mb-4 text-primary" />
+                            <div className="text-lg font-medium">Generating 3D Model...</div>
+                            <div className="w-64 h-2 bg-muted mt-4 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-primary" 
+                                style={{ width: `${generationProgress}%` }}
+                              />
+                            </div>
+                            <div className="text-sm mt-2">{generationProgress}% complete</div>
+                          </>
+                        )}
+                      </div>
+                    )}
+                    
+                    {!modelUrl && !isGenerating3D && (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/10 backdrop-blur-sm z-5">
+                        <Box className="h-16 w-16 mb-4 text-muted-foreground opacity-40" />
+                        <div className="text-lg font-medium text-muted-foreground">No 3D Model Generated Yet</div>
+                        <div className="text-sm mt-2 text-muted-foreground max-w-md text-center">
+                          Draw or import an image, then click the "Generate Model Now" button above to create a 3D model.
+                        </div>
+                      </div>
+                    )}
+                    
+                    <ModelViewer key={modelUrl || 'empty'} modelUrl={modelUrl || undefined} />
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="settings" className="p-4 mt-0">
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-sm font-medium mb-2">Environment</h3>
+                      <select className="w-full p-2 rounded-md border bg-background">
+                        <option value="studio">Studio</option>
+                        <option value="sunset">Sunset</option>
+                        <option value="dawn">Dawn</option>
+                        <option value="night">Night</option>
+                        <option value="warehouse">Warehouse</option>
+                        <option value="forest">Forest</option>
+                        <option value="apartment">Apartment</option>
+                        <option value="city">City</option>
+                      </select>
+                    </div>
+
+                    <Separator />
+
+                    <div>
+                      <h3 className="text-sm font-medium mb-2">Camera Controls</h3>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs">Auto Rotate</span>
+                          <input type="checkbox" className="toggle" />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs">Zoom Speed</span>
+                          <Slider value={[1]} min={0.1} max={2} step={0.1} className="w-32" />
+                        </div>
                       </div>
                     </div>
-                  )}
-                  
-                  <ModelViewer key={modelUrl || 'empty'} modelUrl={modelUrl || undefined} />
-                </div>
-              </TabsContent>
-
-              <TabsContent value="settings" className="p-4 mt-0">
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-sm font-medium mb-2">Environment</h3>
-                    <select className="w-full p-2 rounded-md border bg-background">
-                      <option value="studio">Studio</option>
-                      <option value="sunset">Sunset</option>
-                      <option value="dawn">Dawn</option>
-                      <option value="night">Night</option>
-                      <option value="warehouse">Warehouse</option>
-                      <option value="forest">Forest</option>
-                      <option value="apartment">Apartment</option>
-                      <option value="city">City</option>
-                    </select>
                   </div>
-
-                  <Separator />
-
-                  <div>
-                    <h3 className="text-sm font-medium mb-2">Camera Controls</h3>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs">Auto Rotate</span>
-                        <input type="checkbox" className="toggle" />
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs">Zoom Speed</span>
-                        <Slider value={[1]} min={0.1} max={2} step={0.1} className="w-32" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-            </Tabs>
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </AppTour>
   )
 }
 

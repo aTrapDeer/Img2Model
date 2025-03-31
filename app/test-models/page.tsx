@@ -5,6 +5,8 @@ import ModelViewer from "@/components/model-viewer"
 import { Loader2, Home } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { AppTour } from "@/components/app-tour"
+import { HelpButton } from "@/components/help-button"
 
 interface ModelOption {
   id: number
@@ -80,108 +82,113 @@ export default function TestModelsPage() {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Model Viewer Test Suite</h1>
-        <Button variant="outline" size="sm" asChild>
-          <Link href="/">
-            <Home className="h-4 w-4 mr-2" />
-            Home
-          </Link>
-        </Button>
-      </div>
-      
-      <div className="mb-4">
-        <a 
-          href="/direct-test" 
-          className="inline-block px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
-        >
-          Try Direct Test with Latest Model URL
-        </a>
-      </div>
-      
-      {loading && !modelUrls ? (
-        <div className="flex items-center justify-center h-40">
-          <Loader2 className="w-8 h-8 mr-2 animate-spin" />
-          <span>Loading available models...</span>
-        </div>
-      ) : (
-        <>
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold mb-2">Select a Test Model:</h2>
-            <div className="flex flex-wrap gap-2">
-              {models.map((model) => (
-                <button
-                  key={model.id}
-                  onClick={() => handleModelSelect(model.id)}
-                  className={`px-3 py-1 rounded-md ${
-                    selectedModel === model.id
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-                  }`}
-                >
-                  {model.name}
-                </button>
-              ))}
-            </div>
+    <AppTour autoStart={false}>
+      <div className="container mx-auto py-8">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-bold">Model Viewer Test Suite</h1>
+          <div className="flex items-center gap-2">
+            <HelpButton />
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/">
+                <Home className="h-4 w-4 mr-2" />
+                Home
+              </Link>
+            </Button>
           </div>
-          
-          {modelUrls && (
-            <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-              <div>
-                <h2 className="text-xl font-semibold mb-2">Using Proxy API</h2>
-                <div className="bg-muted rounded-lg p-4 h-[400px]">
-                  <ModelViewer modelUrl={modelUrls.proxied} />
-                </div>
+        </div>
+        
+        <div className="mb-4">
+          <a 
+            href="/direct-test" 
+            className="inline-block px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 direct-test-button"
+          >
+            Try Direct Test with Latest Model URL
+          </a>
+        </div>
+        
+        {loading && !modelUrls ? (
+          <div className="flex items-center justify-center h-40">
+            <Loader2 className="w-8 h-8 mr-2 animate-spin" />
+            <span>Loading available models...</span>
+          </div>
+        ) : (
+          <>
+            <div className="mb-6 model-selection">
+              <h2 className="text-lg font-semibold mb-2">Select a Test Model:</h2>
+              <div className="flex flex-wrap gap-2">
+                {models.map((model) => (
+                  <button
+                    key={model.id}
+                    onClick={() => handleModelSelect(model.id)}
+                    className={`px-3 py-1 rounded-md ${
+                      selectedModel === model.id
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                    }`}
+                  >
+                    {model.name}
+                  </button>
+                ))}
               </div>
-            </div>
-          )}
-          
-          <div className="mt-6 p-4 bg-muted rounded-lg">
-            <div className="flex justify-between items-center">
-              <h3 className="font-medium">Debug Information:</h3>
-              <button
-                onClick={loadDebugInfo}
-                disabled={debugLoading}
-                className="px-3 py-1 rounded bg-primary text-primary-foreground text-sm"
-              >
-                {debugLoading ? (
-                  <div className="flex items-center">
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Loading...
-                  </div>
-                ) : (
-                  'Get Debug Info'
-                )}
-              </button>
             </div>
             
             {modelUrls && (
-              <div className="mt-4 text-sm font-mono overflow-x-auto">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <p className="font-semibold">Direct URL:</p>
-                    <p className="text-xs break-all">{modelUrls.direct}</p>
-                  </div>
-                  <div>
-                    <p className="font-semibold">Proxied URL:</p>
-                    <p className="text-xs break-all">{modelUrls.proxied}</p>
+              <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
+                <div className="model-viewer-container">
+                  <h2 className="text-xl font-semibold mb-2">Using Proxy API</h2>
+                  <div className="bg-muted rounded-lg p-4 h-[400px]">
+                    <ModelViewer modelUrl={modelUrls.proxied} />
                   </div>
                 </div>
-                
-                {debugInfo && (
-                  <div className="mt-4">
-                    <h4 className="font-medium">API Response:</h4>
-                    <pre className="mt-2 p-2 bg-muted/50 rounded text-xs overflow-auto max-h-[300px]">
-                      {JSON.stringify(debugInfo, null, 2)}
-                    </pre>
-                  </div>
-                )}
               </div>
             )}
-          </div>
-        </>
-      )}
-    </div>
+            
+            <div className="mt-6 p-4 bg-muted rounded-lg debug-section">
+              <div className="flex justify-between items-center">
+                <h3 className="font-medium">Debug Information:</h3>
+                <button
+                  onClick={loadDebugInfo}
+                  disabled={debugLoading}
+                  className="px-3 py-1 rounded bg-primary text-primary-foreground text-sm"
+                >
+                  {debugLoading ? (
+                    <div className="flex items-center">
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Loading...
+                    </div>
+                  ) : (
+                    'Get Debug Info'
+                  )}
+                </button>
+              </div>
+              
+              {modelUrls && (
+                <div className="mt-4 text-sm font-mono overflow-x-auto">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="font-semibold">Direct URL:</p>
+                      <p className="text-xs break-all">{modelUrls.direct}</p>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Proxied URL:</p>
+                      <p className="text-xs break-all">{modelUrls.proxied}</p>
+                    </div>
+                  </div>
+                  
+                  {debugInfo && (
+                    <div className="mt-4">
+                      <h4 className="font-medium">API Response:</h4>
+                      <pre className="mt-2 p-2 bg-muted/50 rounded text-xs overflow-auto max-h-[300px]">
+                        {JSON.stringify(debugInfo, null, 2)}
+                      </pre>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    </AppTour>
   )
 } 

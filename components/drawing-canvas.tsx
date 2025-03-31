@@ -495,7 +495,7 @@ export default function DrawingCanvas({
         <Button 
           variant="secondary" 
           size="sm" 
-          className="rounded-full h-8 w-8 p-0 bg-white/80 dark:bg-black/50"
+          className="rounded-full h-8 w-8 p-0 bg-white/80 dark:bg-black/50 image-upload"
           onClick={() => fileInputRef.current?.click()}
           title="Import Image"
         >
